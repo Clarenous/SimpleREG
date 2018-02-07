@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users.apps.UsersConfig',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -123,3 +123,8 @@ STATIC_URL = '/static/'
 
 # Settings for Authentication
 AUTH_USER_MODEL = 'users.User'
+
+
+# Setting for redirect
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/'
