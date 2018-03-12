@@ -25,4 +25,4 @@ class LeaveInfo(models.Model):
     ContactPhone_bigint = models.BigIntegerField(default=0)
 
     def __str__(self):
-        return str(self.id) + ' : ' + self.StuName_text + str(self.StuNumber_int)
+        return str(self.id) + ' : ' + self.StuName_text + ' ' + str(self.StuNumber_int)
