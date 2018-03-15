@@ -4,17 +4,26 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ITower</title>
+    <title>首页 - SimpleREG</title>
     <link href="/static/css/bootstrap.css" rel="stylesheet">
 </head>
 <body>
 <div class="flex-center">
     <div class="container">
         <div>
-            <h1 class="logo"><a href="{% url 'index' %}">ITower</a></h1>
+            <h1 class="logo"><a href="{% url 'exeats:exeats' %}">SimpleREG 假期离校统计</a></h1>
             {% if user.is_authenticated %}
                 <p>你已登录，欢迎你：<a href="#">{{ user.username }}</a></p>
-                <p><a href="{% url 'exeats:exeats' %}">进入离校统计页面</a> </p>
+                {% if latest_holiday_list %}
+                    <ul>
+                    {% for holiday in latest_holiday_list %}
+                        <li><a href="{% url 'exeats:holiday_detail' holiday.id %}">{{ holiday.HolidayName }}</a></li>
+                    {% endfor %}
+                    </ul>
+                    <p><a href="{% url 'exeats:catalog' %}">点击查看完整假期列表</a></p>
+                {% else %}
+                    <p>暂无假期.</p>
+                {% endif %}
                 <button class="btn btn-default"><a href="{% url 'logout' %}?next={{ request.path }}">注销登录</a></button>
                 <button class="btn btn-default"><a href="{% url 'password_change' %}?next={{ request.path }}">修改密码</a></button>
             {% else %}
