@@ -28,8 +28,10 @@
                     <p>本人手机: {{ leaveinfo.StuPhone_bigint }}</p>
                     <p>紧急联系人: {{ leaveinfo.Contact_text }}</p>
                     <p>联系人手机: {{ leaveinfo.ContactPhone_bigint }}</p>
+                    <button class="btn btn-default"><a href="{% url 'exeats:leaveinfo_edit' holiday_id=holiday.id %}?next={{ request.path }}">重新编辑</a></button>
                 {% else %}
                     <p>暂未填写离校登记表.</p>
+                    <button class="btn btn-default"><a href="{% url 'exeats:leaveinfo_edit' holiday_id=holiday.id %}?next={{ request.path }}">填写离校登记表</a></button>
                 {% endif %}
                 <button class="btn btn-default"><a href="{% url 'logout' %}?next={{ request.path }}">注销登录</a></button>
                 <button class="btn btn-default"><a href="{% url 'password_change' %}?next={{ request.path }}">修改密码</a></button>
