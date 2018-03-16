@@ -46,6 +46,12 @@ def leaveinfo_edit(request, holiday_id):
             leaveinfo.StuClass_int = request.user.StuClass
             leaveinfo.StuName_text = request.user.StuName
             leaveinfo.pub_date = timezone.localtime(timezone.now())
+            # 检查是否已提交过离校表
+            try:
+                current_leaveinfo = holiday.leaveinfo_set.get(StuNumber_int=request.user.StuNumber)
+                leaveinfo.pk = current_leaveinfo.pk
+            except (KeyError, LeaveInfo.DoesNotExist):
+                pass
             leaveinfo.save()
 
             if redirect_to:
