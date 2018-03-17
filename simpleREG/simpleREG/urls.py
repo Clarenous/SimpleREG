@@ -18,7 +18,10 @@ from django.urls import path, include
 
 from users import views
 
+from django.views.i18n import null_javascript_catalog
+
 urlpatterns = [
+    path('my_admin/jsi18n', null_javascript_catalog),
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
     path('users/', include('django.contrib.auth.urls')),
