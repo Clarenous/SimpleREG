@@ -1,5 +1,5 @@
 from django.forms import ModelForm, DateField
-from django.contrib.admin.widgets import AdminDateWidget
+from django.contrib.admin import widgets
 
 from .models import LeaveInfo
 
@@ -8,7 +8,4 @@ class LeaveInfoForm(ModelForm):
         model = LeaveInfo
         fields = ['LeaveTime_date', 'BackTime_date','Destination_text',
                   'StuPhone_bigint', 'Contact_text', 'ContactPhone_bigint']
-    def __init__(self, *args, **kwargs):
-        super(LeaveInfoForm, self).__init__(*args, **kwargs)
-        self.fields['LeaveTime_date'].widget = AdminDateWidget()
-        self.fields['BackTime_date'].widget = AdminDateWidget()
+    LeaveTime_date = DateField(widget=widgets.AdminDateWidget())

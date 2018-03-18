@@ -137,3 +137,5 @@ AUTHENTICATION_BACKENDS = (
 # Setting for redirect
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/users/login/'
+
