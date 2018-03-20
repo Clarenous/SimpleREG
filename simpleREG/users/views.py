@@ -3,15 +3,21 @@ import warnings
 from django.conf import settings
 # Avoid shadowing the login() and logout() views below.
 from django.contrib.auth import (
-    REDIRECT_FIELD_NAME, login as auth_login,
+    REDIRECT_FIELD_NAME, login as auth_login, update_session_auth_hash,
 )
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import (
+    AuthenticationForm, PasswordChangeForm,
+)
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpResponseRedirect
 from django.shortcuts import resolve_url
+from django.template.response import TemplateResponse
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.deprecation import RemovedInDjango21Warning
 from django.utils.http import is_safe_url
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
@@ -20,6 +26,7 @@ from django.views.generic.edit import FormView
 
 from django.shortcuts import render, redirect
 from .forms import RegisterForm
+from .models import User
 
 
 def register(request):
@@ -108,6 +115,7 @@ class LoginView(SuccessURLAllowedHostsMixin, FormView):
             allowed_hosts=self.get_success_url_allowed_hosts(),
             require_https=self.request.is_secure(),
         )
+        redirect_to = '/users/check_login_time/' + '?next=' + redirect_to
         return redirect_to if url_is_safe else ''
 
     def get_form_class(self):
@@ -151,3 +159,87 @@ def login(request, template_name='registration/login.html',
         extra_context=extra_context,
         redirect_authenticated_user=redirect_authenticated_user,
     )(request)
+
+
+class PasswordContextMixin:
+    extra_context = None
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = self.title
+        if self.extra_context is not None:
+            context.update(self.extra_context)
+        return context
+
+
+@sensitive_post_parameters()
+@csrf_protect
+@login_required
+def password_change(request,
+                    template_name='registration/password_change_form.html',
+                    post_change_redirect=None,
+                    password_change_form=PasswordChangeForm,
+                    extra_context=None):
+    warnings.warn("The password_change() view is superseded by the "
+                  "class-based PasswordChangeView().",
+                  RemovedInDjango21Warning, stacklevel=2)
+    if post_change_redirect is None:
+        post_change_redirect = reverse('password_change_done')
+    else:
+        post_change_redirect = resolve_url(post_change_redirect)
+    if request.method == "POST":
+        form = password_change_form(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            # Updating the password logs out all other sessions for the user
+            # except the current one.
+            update_session_auth_hash(request, form.user)
+            return HttpResponseRedirect(post_change_redirect)
+    else:
+        form = password_change_form(user=request.user)
+    context = {
+        'form': form,
+        'title': _('Password change'),
+    }
+    if extra_context is not None:
+        context.update(extra_context)
+
+    return TemplateResponse(request, template_name, context)
+
+
+class PasswordChangeView(PasswordContextMixin, FormView):
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy('password_change_done')
+    template_name = 'registration/password_change_form.html'
+    title = _('Password change')
+
+    @method_decorator(sensitive_post_parameters())
+    @method_decorator(csrf_protect)
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        form.save()
+        # Updating the password logs out all other sessions for the user
+        # except the current one.
+        update_session_auth_hash(self.request, form.user)
+        return super().form_valid(form)
+
+
+def check_login_time(request):
+    # 从 get 或者 post 请求中获取 next 参数值
+    # get 请求中，next 通过 url 传递，即 /?next=value
+    # post 请求中，next 通过表单传递，即 <input type="hidden" name="next" value="{{ next }}"/>
+    next_url = request.POST.get('next', request.GET.get('next', ''))
+    if request.user.LoginFirstTime:
+        _user = User.objects.get(pk=request.user.id)
+        _user.LoginFirstTime = False
+        _user.save()
+        return redirect('/users/password_change/' + '?next=' + next_url)
+    return redirect(next_url)
