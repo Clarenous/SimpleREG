@@ -16,30 +16,34 @@
     <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static 'admin/' %}{% endfilter %}";</script>
     <script src="{% static 'admin/js/jquery.js' %}"></script>
     <script src="{% static 'admin/js/jquery.init.js' %}"></script>
-    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <!--<link href="/static/css/bootstrap.css" rel="stylesheet">--->
+    <link href="/static/mobi/mobi.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="flex-center">
     <div class="container">
         <div class="flex-center">
             <div class="unit-1-2 unit-1-on-mobile">
-                <h3>编辑离校表</h3>
+                <h3 class="flex-center">编辑离校表</h3>
+                <div class="flex-center">
                 <form class="form" action="{% url 'exeats:leaveinfo_edit' holiday.id %}" method="post">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
                     {% for field in form %}
-                        {{ field.label_tag }}
-                        {{ field }}
+                        <table class="flex-left">
+                            <td>{{ field.label_tag }}</td><td>{{ field }}</td>
+                        </table>
                         {{ field.errors }}
                         {% if field.help_text %}
                             <p class="help text-small text-muted">{{ field.help_text|safe }}</p>
                         {% endif %}
-                        <br />
                     {% endfor %}
                     <button type="submit" class="btn btn-primary btn-block">确认提交</button>
                 </form>
+                </div>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>

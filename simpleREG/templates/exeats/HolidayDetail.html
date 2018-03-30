@@ -12,14 +12,14 @@
     <div class="container">
             <h1 class="logo"><a href="{% url 'exeats:holiday_detail' holiday.id %}">假期详情</a></h1>
             {% if user.is_authenticated %}
-                <h3>你已登录，欢迎你：<a href="#">{{ user.username }}</a></h3>
+                <h3>你已登录，欢迎你：<a href="#">{{ user.StuName }} {{ user.username }}</a></h3>
                 <br />
                 <h4>{{ holiday.HolidayName }}</h4>
                 <h4>起始日期: {{ holiday.HolidayStartDate }}</h4>
                 <h4>终止日期: {{ holiday.HolidayEndDate }}</h4>
                 <br />
                 <h4>当前请假表</h4>
-                {% if leaveinfo.StuNumber_int != 0 %}
+                {% if leaveinfo.StuNumber_int != null %}
                     <p>姓名: {{ leaveinfo.StuName_text }}</p>
                     <p>学号: {{ leaveinfo.StuNumber_int }}</p>
                     <p>班级: {{ leaveinfo.StuClass_int }}</p>
