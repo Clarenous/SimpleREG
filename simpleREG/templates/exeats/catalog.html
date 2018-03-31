@@ -11,19 +11,18 @@
 <div class="flex-center">
     <div class="container">
         <div>
-            <h1 class="logo"><a href="{% url 'index' %}">SimpleREG 假期目录</a></h1>
-                <p>欢迎你：<a href="#">{{ user.username }}</a></p>
+            <h1 class="logo"><a href="{% url 'index' %}">假期目录</a></h1>
+                <p>欢迎你：<a>{{ user.StuName }}</a></p>
                 {% if holiday_list %}
                     <ul>
                     {% for holiday in holiday_list %}
-                        <li><a href="{% url 'exeats:holiday_detail' holiday.id %}">{{ holiday.HolidayName }}</a></li>
+                        <li><h4><a href="{% url 'exeats:holiday_detail' holiday.id %}">{{ holiday.HolidayName }}</a></h4></li>
                     {% endfor %}
                     </ul>
                 {% else %}
                     <p>暂无假期.</p>
                 {% endif %}
-                <button class="btn btn-default"><a href="{% url 'logout' %}?next={{ request.path }}">注销登录</a></button>
-                <button class="btn btn-default"><a href="{% url 'password_change' %}?next={{ request.path }}">修改密码</a></button>
+                <button class="btn btn-default"><a href="{% url 'exeats:exeats' %}">返回上一级</a></button>
         </div>
     </div>
 </div>

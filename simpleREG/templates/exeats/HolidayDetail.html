@@ -12,7 +12,7 @@
     <div class="container">
             <h1 class="logo"><a href="{% url 'exeats:holiday_detail' holiday.id %}">假期详情</a></h1>
             {% if user.is_authenticated %}
-                <h3>你已登录，欢迎你：<a href="#">{{ user.StuName }} {{ user.username }}</a></h3>
+                <h3>你已登录，欢迎你：<a href="#">{{ user.StuName }}</a></h3>
                 <br />
                 <h4>{{ holiday.HolidayName }}</h4>
                 <h4>起始日期: {{ holiday.HolidayStartDate }}</h4>
@@ -20,29 +20,29 @@
                 <br />
                 <h4>当前请假表</h4>
                 {% if leaveinfo.StuNumber_int != null %}
+                    <button class="btn btn-default"><a href="{% url 'exeats:leaveinfo_edit' holiday_id=holiday.id %}?next={{ request.path }}">重新编辑</a></button>
                     <p>姓名: {{ leaveinfo.StuName_text }}</p>
                     <p>学号: {{ leaveinfo.StuNumber_int }}</p>
                     <p>班级: {{ leaveinfo.StuClass_int }}</p>
+                    <p>是否离校: {% if leaveinfo.isLeaving_bool == True %} 是 {% else %} 否 {% endif %}</p>
+                    {% if leaveinfo.isLeaving_bool == True %}
                     <p>离校时间: {{ leaveinfo.LeaveTime_date }}</p>
                     <p>返校时间: {{ leaveinfo.BackTime_date }}</p>
                     <p>假期去向: {{ leaveinfo.Destination_text }}</p>
+                    {% endif %}
                     <p>本人手机: {{ leaveinfo.StuPhone_bigint }}</p>
                     <p>紧急联系人: {{ leaveinfo.Contact_text }}</p>
                     <p>联系人手机: {{ leaveinfo.ContactPhone_bigint }}</p>
-                    <button class="btn btn-default"><a href="{% url 'exeats:leaveinfo_edit' holiday_id=holiday.id %}?next={{ request.path }}">重新编辑</a></button>
                 {% else %}
                     <p>暂未填写离校登记表.</p>
                     <button class="btn btn-default"><a href="{% url 'exeats:leaveinfo_edit' holiday_id=holiday.id %}?next={{ request.path }}">填写离校登记表</a></button>
                 {% endif %}
-                <button class="btn btn-default"><a href="{% url 'logout' %}?next={{ request.path }}">注销登录</a></button>
-                <button class="btn btn-default"><a href="{% url 'password_change' %}?next={{ request.path }}">修改密码</a></button>
             {% else %}
                 <p>你还没有登录，请
                     <button class="btn btn-default"><a href="{% url 'login' %}?next={{ request.path }}">登录</a></button>
-                    或者
-                    <button class="btn btn-default"><a href="{% url 'users:register' %}">注册</a></button>
                 </p>
             {% endif %}
+        <button class="btn btn-default"><a href="{% url 'index' %}">返回首页</a></button>
         </div>
     </div>
 </div>

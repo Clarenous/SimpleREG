@@ -243,3 +243,7 @@ def check_login_time(request):
         _user.save()
         return redirect('/users/password_change/' + '?next=' + next_url)
     return redirect(next_url)
+
+
+def doNothing(request):
+    return redirect('/')

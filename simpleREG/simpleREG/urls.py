@@ -24,7 +24,6 @@ def i18n_javascript(request):
     return admin.site.i18n_javascript(request)
 
 urlpatterns = [
-    path('admin/jsi18n', i18n_javascript),
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
     path('users/', include('django.contrib.auth.urls')),

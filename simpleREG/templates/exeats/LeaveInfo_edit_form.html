@@ -5,45 +5,157 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>编辑离校表 - SimpleREG</title>
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'admin/css/forms.css' %}" />
-    <script src="/admin/jsi18n/"></script>
-    <script src="{% static 'admin/js/core.js' %}"></script>
-    <script src="{% static 'admin/js/jquery.init.both.js' %}"></script>
-    <script src="{% static 'admin/js/calendar.js' %}"></script>
-    <script src="{% static 'admin/js/admin/DateTimeShortcuts.js' %}"></script>
-    <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static 'admin/' %}{% endfilter %}";</script>
-    <script src="{% static 'admin/js/jquery.js' %}"></script>
-    <script src="{% static 'admin/js/jquery.init.js' %}"></script>
-    <!--<link href="/static/css/bootstrap.css" rel="stylesheet">--->
-    <link href="/static/mobi/mobi.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/mobi/mobi.min.css">
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css">
+    <script type="text/javascript" src="/static/jquery/dist/jquery.min.js"></script>
+    <script src="/static/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+    <script src="/static/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+    <style>
+        .errorlist {
+            color: red;
+        }
+    </style>
 </head>
 <body>
 <div class="flex-center">
     <div class="container">
         <div class="flex-center">
             <div class="unit-1-2 unit-1-on-mobile">
-                <h3 class="flex-center">编辑离校表</h3>
-                <div class="flex-center">
+                <h3 class="flex-center" align="center">编辑离校表</h3>
+                <h4 class="flex-center" align="center">{{ user.StuName }} {{ user.StuNumber }}</h4>
                 <form class="form" action="{% url 'exeats:leaveinfo_edit' holiday.id %}" method="post">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
-                    {% for field in form %}
-                        <table class="flex-left">
-                            <td>{{ field.label_tag }}</td><td>{{ field }}</td>
-                        </table>
-                        {{ field.errors }}
-                        {% if field.help_text %}
-                            <p class="help text-small text-muted">{{ field.help_text|safe }}</p>
+                    <div align="center">
+                    <label for="id_isLeaving_bool">是否离校:</label>
+                        {% if form.isLeaving_bool.value == True %}
+                            <input value="True" type="radio" name="isLeaving_bool" id="id_isLeaving_bool" checked class="my_radio" />是
+                            &#8195
+                            <input value="False" type="radio" name="isLeaving_bool" id="id_isLeaving_bool" class="my_radio" />否
+                        {% else %}
+                            <input value="True" type="radio" name="isLeaving_bool" id="id_isLeaving_bool" class="my_radio" />是
+                            &#8195
+                            <input value="False" type="radio" name="isLeaving_bool" id="id_isLeaving_bool" checked class="my_radio" />否
                         {% endif %}
-                    {% endfor %}
+                    </div>
+                    <div align="center" id="div01">
+                    <label for="id_LeaveTime_date">离校日期:</label><input value="{{ form.LeaveTime_date.value|date:"Y/m/d" }}" type="text" name="LeaveTime_date" class="form_datetime" size="10" readonly id="id_LeaveTime_date" />
+                        {{ form.LeaveTime_date.errors }}
+                        {% if form.LeaveTime_date.help_text %}
+                            <p class="help text-small text-muted">{{ form.LeaveTime_date.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                    <div align="center" id="div02">
+                    <label for="id_BackTime_date">返校日期:</label><input value="{{ form.BackTime_date.value|date:"Y/m/d" }}" type="text" name="BackTime_date" class="form_datetime" size="10" readonly id="id_BackTime_date" />
+                        {{ form.BackTime_date.errors }}
+                        {% if form.BackTime_date.help_text %}
+                            <p class="help text-small text-muted">{{ form.BackTime_date.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                    <div align="center" id="div03">
+                    <label for="id_Destination_text">离校去向:</label><input value="{{ form.Destination_text.value|default_if_none:"" }}" type="text" name="Destination_text" maxlength="50" id="id_Destination_text" />
+                        {{ form.Destination_text.errors }}
+                        {% if form.Destination_text.help_text %}
+                            <p class="help text-small text-muted">{{ form.Destination_text.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                    <div align="center">
+                    <label for="id_StuPhone_bigint">本人联系方式:</label><input value="{{ form.StuPhone_bigint.value|default_if_none:"" }}" type="tel" name="StuPhone_bigint" id="id_StuPhone_bigint" />
+                        {{ form.StuPhone_bigint.errors }}
+                        {% if form.StuPhone_bigint.help_text %}
+                            <p class="help text-small text-muted">{{ form.StuPhone_bigint.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                    <div align="center">
+                    <label for="id_Contact_text">紧急联系人:</label><input value="{{ form.Contact_text.value|default_if_none:"" }}" type="text" name="Contact_text" maxlength="50" id="id_Contact_text" />
+                        {{ form.Contact_text.errors }}
+                        {% if form.Contact_text.help_text %}
+                            <p class="help text-small text-muted">{{ form.Contact_text.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                    <div align="center">
+                    <label for="id_ContactPhone_bigint">紧急联系人电话:</label><input value="{{ form.ContactPhone_bigint.value|default_if_none:"" }}" type="tel" name="ContactPhone_bigint" id="id_ContactPhone_bigint" />
+                        {{ form.ContactPhone_bigint.errors }}
+                        {% if form.ContactPhone_bigint.help_text %}
+                            <p class="help text-small text-muted">{{ form.ContactPhone_bigint.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                    <div align="center">
                     <button type="submit" class="btn btn-primary btn-block">确认提交</button>
+                    <button class="btn btn-default"><a href="{% url 'exeats:holiday_detail' holiday.id %}">放弃修改</a></button>
+                    </div>
                 </form>
-                </div>
             </div>
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    $("#id_LeaveTime_date").datetimepicker({
+        format: 'yyyy/mm/dd',
+        minView:'month',
+        language: 'zh-CN',
+        autoclose:true,
+        startDate:new Date()
+    }).on("click",function(){
+        $("#id_LeaveTime_date").datetimepicker("setEndDate",$("#id_BackTime_date").val())
+    });
+    $("#id_BackTime_date").datetimepicker({
+        format: 'yyyy/mm/dd',
+        minView:'month',
+        language: 'zh-CN',
+        autoclose:true,
+        startDate:new Date()
+    }).on("click",function(){
+        $("#id_BackTime_date").datetimepicker("setStartDate",$("#id_LeaveTime_date".val()))
+    });
+</script>
+<script type="text/javascript">
+    $(function(){
+        var isPermanentValue = $('input[name="isLeaving_bool"]:checked ').val();
+        console.log(isPermanentValue);
+        console.log(04);
+        if(isPermanentValue == "False"){
+            $("#div01").hide();
+            document.getElementById('id_LeaveTime_date').value = "{{ holiday.HolidayStartDate|date:"Y/m/d" }}";
+            $("#div02").hide();
+            document.getElementById('id_BackTime_date').value = "{{ holiday.HolidayEndDate|date:"Y/m/d" }}";
+            $("#div03").hide();
+            document.getElementById('id_Destination_text').value = "留校";
+
+            console.log(00);
+        }
+        if(isPermanentValue == "True"){
+            $("#div01").show();
+            $("#div02").show();
+            $("#div03").show();
+            console.log(01);
+        }
+        $(".my_radio").click(function(){
+            var isPermanentValue = $('input[name="isLeaving_bool"]:checked ').val();
+            console.log(isPermanentValue);
+            console.log(05);
+            if(isPermanentValue == "False"){
+                $("#div01").hide();
+                document.getElementById('id_LeaveTime_date').value = "{{ holiday.HolidayStartDate|date:"Y/m/d" }}";
+                $("#div02").hide();
+                document.getElementById('id_BackTime_date').value = "{{ holiday.HolidayEndDate|date:"Y/m/d" }}";
+                $("#div03").hide();
+                document.getElementById('id_Destination_text').value = "留校";
+
+                console.log(02);
+            }
+            if(isPermanentValue == "True"){
+                $("#div01").show();
+                document.getElementById('id_LeaveTime_date').value = "{{ form.LeaveTime_date.value|date:"Y/m/d" }}";
+                $("#div02").show();
+                document.getElementById('id_BackTime_date').value = "{{ form.BackTime_date.value|date:"Y/m/d" }}";
+                $("#div03").show();
+                console.log(03);
+                document.getElementById('id_Destination_text').value = "{{ form.Destination_text.value|default_if_none:"" }}";
+            }
+        })
+    })
+</script>
 </body>
 </html>

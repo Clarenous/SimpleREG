@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+from django.urls import reverse
 
 from .models import Holiday, LeaveInfo
 
@@ -8,7 +9,7 @@ from .forms import LeaveInfoForm
 
 
 def exeats(request):
-    latest_holiday_list = Holiday.objects.order_by('-id')[:3]
+    latest_holiday_list = Holiday.objects.order_by('-id')[:2]
     context = {'latest_holiday_list': latest_holiday_list}
     return render(request, 'exeats/exeats.html', context)
 
@@ -54,8 +55,8 @@ def leaveinfo_edit(request, holiday_id):
                 pass
             leaveinfo.save()
 
-            if redirect_to:
-                return redirect(redirect_to)
+            if reverse('exeats:holiday_detail', args=(holiday_id,)):
+                return redirect(reverse('exeats:holiday_detail', args=(holiday_id,)))
             else:
                 return redirect('/')
     else:
