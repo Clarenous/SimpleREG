@@ -105,3 +105,4 @@ ENV/
 
 # Database file
 db.sqlite3
+UserInfo.csv
