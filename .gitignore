@@ -105,4 +105,8 @@ ENV/
 
 # Database file
 db.sqlite3
+00db.sqlite3
 UserInfo.csv
+
+# Deploy files
+deploy_files/
