@@ -6,7 +6,7 @@ csvFile = open("LeaveInfo_20180405.csv", "w", newline='')
 writer = csv.writer(csvFile)
 
 holiday_list = Holiday.objects.order_by('-id')
-holiday = holiday_list[len(holiday_list)-1]
+holiday = holiday_list[0]
 
 leaveinfo_list = holiday.leaveinfo_set.order_by('-StuNumber_int')
 leaveinfo_list = leaveinfo_list[::-1]

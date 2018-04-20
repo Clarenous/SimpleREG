@@ -20,7 +20,9 @@
                 <br />
                 <h4>当前请假表</h4>
                 {% if leaveinfo.StuNumber_int != null %}
-                    <button class="btn btn-default"><a href="{% url 'exeats:leaveinfo_edit' holiday_id=holiday.id %}?next={{ request.path }}">重新编辑</a></button>
+                    {% if holiday.HolidayDisabled == False %}
+                        <button class="btn btn-default"><a href="{% url 'exeats:leaveinfo_edit' holiday_id=holiday.id %}?next={{ request.path }}">重新编辑</a></button>
+                    {% endif %}
                     <p>姓名: {{ leaveinfo.StuName_text }}</p>
                     <p>学号: {{ leaveinfo.StuNumber_int }}</p>
                     <p>班级: {{ leaveinfo.StuClass_int }}</p>

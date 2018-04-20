@@ -9,7 +9,7 @@ from .forms import LeaveInfoForm
 
 
 def exeats(request):
-    latest_holiday_list = Holiday.objects.order_by('-id')[:2]
+    latest_holiday_list = Holiday.objects.order_by('-id')[:1]
     context = {'latest_holiday_list': latest_holiday_list}
     return render(request, 'exeats/exeats.html', context)
 
@@ -39,6 +39,8 @@ def leaveinfo_edit(request, holiday_id):
     # 只有当请求为 POST 时，才表示用户提交了离校登记表
     if request.method == 'POST':
         form = LeaveInfoForm(request.POST)
+        if holiday.HolidayDisabled:
+            return redirect('/')
         # 验证数据的合法性
         if form.is_valid():
             leaveinfo = form.save(commit=False)
@@ -60,6 +62,8 @@ def leaveinfo_edit(request, holiday_id):
             else:
                 return redirect('/')
     else:
+        if holiday.HolidayDisabled:
+            return redirect('/')
         # 请求不是 POST，表明用户正在访问填表页面，返回已有的表格信息
         try:
             leaveinfo = holiday.leaveinfo_set.get(StuNumber_int=request.user.StuNumber)

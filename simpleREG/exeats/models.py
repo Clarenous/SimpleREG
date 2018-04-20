@@ -5,6 +5,7 @@ class Holiday(models.Model):
     HolidayName = models.CharField(max_length=50, default="blank")
     HolidayStartDate = models.DateField(auto_now=False, auto_now_add=False, blank=True)
     HolidayEndDate = models.DateField(auto_now=False, auto_now_add=False, default=0, blank=True)
+    HolidayDisabled = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.id) + ' : ' + self.HolidayName + ' ' + str(self.HolidayStartDate) + ' ' + str(self.HolidayEndDate)
